@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Global Market Board</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --board: #05070f;
+    --board-2: rgba(18,24,46,0.72);
+    --amber: #e8c766;
+    --amber-dim: rgba(232,199,102,0.35);
+    --green: #6fe3b4;
+    --green-dim: rgba(111,227,180,0.22);
+    --grey: #8b93b8;
+    --divider: rgba(180,195,255,0.12);
+    --fg: #eef1ff;
+    --bg: var(--board);
+    --panel: var(--board-2);
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background: var(--bg); color: var(--fg);
+    font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+    position: relative;
+  }
+  body::before, body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::before {
+    background-image:
+      radial-gradient(1.6px 1.6px at 18% 22%, #ffffff 60%, transparent),
+      radial-gradient(1.2px 1.2px at 34% 68%, #ffffff 60%, transparent),
+      radial-gradient(1.8px 1.8px at 52% 12%, #ffffff 60%, transparent),
+      radial-gradient(1.2px 1.2px at 71% 45%, #ffffff 60%, transparent),
+      radial-gradient(1.4px 1.4px at 85% 78%, #ffffff 60%, transparent),
+      radial-gradient(1.1px 1.1px at 9% 85%, #ffffff 60%, transparent),
+      radial-gradient(1.6px 1.6px at 63% 90%, #ffffff 60%, transparent),
+      radial-gradient(1.2px 1.2px at 95% 30%, #ffffff 60%, transparent),
+      radial-gradient(1.3px 1.3px at 44% 40%, #ffffff 55%, transparent),
+      radial-gradient(1px 1px at 27% 8%, #ffffff 55%, transparent);
+    background-repeat: repeat;
+    background-size: 480px 480px;
+    opacity: 0.55;
+    animation: twinkle 7s ease-in-out infinite;
+  }
+  body::after {
+    background-image:
+      radial-gradient(1px 1px at 12% 52%, #bcd0ff 60%, transparent),
+      radial-gradient(1px 1px at 58% 60%, #bcd0ff 60%, transparent),
+      radial-gradient(1.4px 1.4px at 76% 15%, #bcd0ff 60%, transparent),
+      radial-gradient(1px 1px at 90% 62%, #bcd0ff 60%, transparent),
+      radial-gradient(1.2px 1.2px at 22% 92%, #bcd0ff 55%, transparent),
+      radial-gradient(1px 1px at 5% 35%, #bcd0ff 55%, transparent);
+    background-repeat: repeat;
+    background-size: 620px 620px;
+    opacity: 0.4;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 0.85; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body::before { animation: none; }
+  }
+
+  .constellations {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.55;
+  }
+  .constellations line {
+    stroke: rgba(190,205,255,0.35);
+    stroke-width: 1;
+  }
+  .constellations circle {
+    fill: #f2f5ff;
+    filter: drop-shadow(0 0 3px rgba(210,220,255,0.9));
+  }
+
+  .shooting-star {
+    position: fixed;
+    width: 110px;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, #ffffff 75%, rgba(255,255,255,0) 100%);
+    border-radius: 2px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+    filter: drop-shadow(0 0 4px rgba(255,255,255,0.85));
+  }
+  .shooting-star.s1 { top: 12%; left: 8%; transform: rotate(18deg); animation: shoot1 12s linear infinite; animation-delay: 1.5s; }
+  .shooting-star.s2 { top: 62%; left: 65%; transform: rotate(200deg); animation: shoot2 16s linear infinite; animation-delay: 6s; }
+  .shooting-star.s3 { top: 28%; left: 55%; transform: rotate(24deg); animation: shoot3 19s linear infinite; animation-delay: 10s; }
+  .shooting-star.s4 { top: 78%; left: 20%; transform: rotate(-10deg); animation: shoot4 22s linear infinite; animation-delay: 4s; }
+
+  @keyframes shoot1 {
+    0% { opacity: 0; transform: rotate(18deg) translateX(0); }
+    2% { opacity: 1; }
+    11% { opacity: 0; transform: rotate(18deg) translateX(380px); }
+    100% { opacity: 0; transform: rotate(18deg) translateX(380px); }
+  }
+  @keyframes shoot2 {
+    0% { opacity: 0; transform: rotate(200deg) translateX(0); }
+    2% { opacity: 1; }
+    9% { opacity: 0; transform: rotate(200deg) translateX(340px); }
+    100% { opacity: 0; transform: rotate(200deg) translateX(340px); }
+  }
+  @keyframes shoot3 {
+    0% { opacity: 0; transform: rotate(24deg) translateX(0); }
+    2% { opacity: 1; }
+    13% { opacity: 0; transform: rotate(24deg) translateX(420px); }
+    100% { opacity: 0; transform: rotate(24deg) translateX(420px); }
+  }
+  @keyframes shoot4 {
+    0% { opacity: 0; transform: rotate(-10deg) translateX(0); }
+    2% { opacity: 1; }
+    10% { opacity: 0; transform: rotate(-10deg) translateX(360px); }
+    100% { opacity: 0; transform: rotate(-10deg) translateX(360px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .shooting-star { display: none; }
+  }
+  .frame { position: relative; z-index: 1; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  .frame {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: clamp(20px,4vw,48px) clamp(14px,4vw,32px) 56px;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  h1 {
+    font-size: clamp(20px, 3vw, 26px);
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.01em;
+    text-shadow: 0 0 18px rgba(180,200,255,0.25);
+  }
+  .now {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: var(--grey);
+    text-align: right;
+  }
+  .now b { color: var(--fg); font-weight: 500; }
+  .sub {
+    font-size: 13px;
+    color: var(--grey);
+    margin: 6px 0 22px;
+  }
+
+  .board {
+    border: 1px solid var(--divider);
+    background: var(--panel);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 0 40px rgba(120,140,255,0.08), inset 0 1px 0 rgba(255,255,255,0.04);
+    border-radius: 2px;
+    overflow-x: auto;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 24px 1.3fr 0.85fr 0.7fr 0.85fr 0.85fr;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--divider);
+    min-width: 760px;
+  }
+  .row:last-child { border-bottom: none; }
+  .row.head {
+    font-size: 11px;
+    color: var(--grey);
+    padding: 10px 18px;
+    text-transform: none;
+  }
+
+  .dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--grey);
+    box-shadow: none;
+  }
+  .dot.open { background: var(--green); box-shadow: 0 0 8px var(--green-dim); animation: pulse 2.2s ease-in-out infinite; }
+  .dot.lunch { background: var(--amber); box-shadow: 0 0 8px var(--amber-dim); }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dot.open { animation: none; }
+  }
+
+  .exchange .name { font-weight: 500; font-size: 15px; }
+  .exchange .city { font-size: 12px; color: var(--grey); margin-top: 2px; }
+
+  .session-window {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+  }
+  .session-window .zone { display: block; font-family: 'IBM Plex Sans', sans-serif; font-size: 11px; color: var(--grey); margin-top: 2px; }
+
+  .status-label {
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    color: var(--grey);
+  }
+  .status-label.open { color: var(--green); }
+  .status-label.lunch { color: var(--amber); }
+  .status-note {
+    font-size: 10px;
+    color: var(--grey);
+    opacity: 0.65;
+    margin-top: 3px;
+  }
+
+  .countdown {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+  }
+  .countdown .cd-label { display: block; font-family: 'IBM Plex Sans', sans-serif; font-size: 11px; color: var(--grey); margin-top: 2px; }
+
+  footer {
+    margin-top: 22px;
+    font-size: 11.5px;
+    color: var(--grey);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 620px) {
+    .row { grid-template-columns: 20px 1.2fr 0.8fr 0.65fr 0.8fr 0.8fr; padding: 14px; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<svg class="constellations" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice">
+  <!-- Big Dipper -->
+  <g>
+    <line x1="70" y1="120" x2="130" y2="100"/>
+    <line x1="130" y1="100" x2="190" y2="110"/>
+    <line x1="190" y1="110" x2="230" y2="140"/>
+    <line x1="230" y1="140" x2="70" y2="120"/>
+    <line x1="230" y1="140" x2="280" y2="120"/>
+    <line x1="280" y1="120" x2="330" y2="90"/>
+    <line x1="330" y1="90" x2="370" y2="60"/>
+    <circle cx="70" cy="120" r="2"/>
+    <circle cx="130" cy="100" r="2"/>
+    <circle cx="190" cy="110" r="2"/>
+    <circle cx="230" cy="140" r="2"/>
+    <circle cx="280" cy="120" r="2"/>
+    <circle cx="330" cy="90" r="2"/>
+    <circle cx="370" cy="60" r="2.4"/>
+  </g>
+  <!-- Orion -->
+  <g>
+    <line x1="580" y1="250" x2="600" y2="300"/>
+    <line x1="600" y1="300" x2="630" y2="310"/>
+    <line x1="630" y1="310" x2="660" y2="320"/>
+    <line x1="660" y1="320" x2="680" y2="260"/>
+    <line x1="600" y1="300" x2="590" y2="400"/>
+    <line x1="660" y1="320" x2="690" y2="410"/>
+    <circle cx="580" cy="250" r="2.4"/>
+    <circle cx="680" cy="260" r="2.4"/>
+    <circle cx="600" cy="300" r="1.8"/>
+    <circle cx="630" cy="310" r="1.8"/>
+    <circle cx="660" cy="320" r="1.8"/>
+    <circle cx="590" cy="400" r="2"/>
+    <circle cx="690" cy="410" r="2"/>
+  </g>
+  <!-- Cassiopeia -->
+  <g>
+    <line x1="750" y1="80" x2="790" y2="120"/>
+    <line x1="790" y1="120" x2="830" y2="90"/>
+    <line x1="830" y1="90" x2="870" y2="130"/>
+    <line x1="870" y1="130" x2="910" y2="100"/>
+    <circle cx="750" cy="80" r="2"/>
+    <circle cx="790" cy="120" r="2"/>
+    <circle cx="830" cy="90" r="2.2"/>
+    <circle cx="870" cy="130" r="2"/>
+    <circle cx="910" cy="100" r="2"/>
+  </g>
+</svg>
+<div class="shooting-star s1"></div>
+<div class="shooting-star s2"></div>
+<div class="shooting-star s3"></div>
+<div class="shooting-star s4"></div>
+<div class="frame">
+  <header>
+    <h1>Global Market Board</h1>
+    <div class="now">Singapore time — <b id="nowSGT">--:--:--</b></div>
+  </header>
+  <div class="sub">Live status of the major exchanges, everything shown in Singapore time.</div>
+
+  <div class="board">
+    <div class="row head">
+      <div></div>
+      <div>Exchange</div>
+      <div>Session (SGT)</div>
+      <div>Status</div>
+      <div>Closes in</div>
+      <div>Opens in</div>
+    </div>
+    <div id="rows"></div>
+  </div>
+
+  <footer>
+    Regular trading-session hours plus each exchange's 2026 public holiday calendar — pre-market and after-hours sessions aren't modelled, and an exchange can still announce an unscheduled closure (severe weather, a one-off market event) that this board won't know about.
+  </footer>
+</div>
+
+<script>
+(function () {
+  const EXCHANGES = [
+    { name: 'Singapore Exchange', code: 'STI · SGX', city: 'Singapore', tz: 'Asia/Singapore', sessions: [[9*60, 17*60]],
+      holidays: [
+        ['2026-01-01','New Year\u2019s Day'], ['2026-02-17','Chinese New Year'], ['2026-02-18','Chinese New Year (Day 2)'],
+        ['2026-04-03','Good Friday'], ['2026-05-01','Labour Day'], ['2026-05-27','Hari Raya Haji'],
+        ['2026-06-01','Vesak Day (observed)'], ['2026-08-10','National Day (observed)'],
+        ['2026-11-09','Deepavali (observed)'], ['2026-12-25','Christmas Day']
+      ] },
+    { name: 'Hong Kong Exchange', code: 'Hang Seng · HKEX', city: 'Hong Kong', tz: 'Asia/Hong_Kong', sessions: [[9*60+30, 12*60], [13*60, 16*60]],
+      holidays: [
+        ['2026-01-01','New Year\u2019s Day'], ['2026-02-17','Lunar New Year'], ['2026-02-18','Lunar New Year (Day 2)'],
+        ['2026-02-19','Lunar New Year (Day 3)'], ['2026-04-03','Good Friday'], ['2026-04-06','Ching Ming Festival (observed)'],
+        ['2026-04-07','Day after Easter Monday'], ['2026-05-01','Labour Day'], ['2026-05-25','Birthday of the Buddha (observed)'],
+        ['2026-06-19','Tuen Ng Festival'], ['2026-07-01','HKSAR Establishment Day'], ['2026-10-01','National Day'],
+        ['2026-10-19','Chung Yeung Festival (observed)'], ['2026-12-25','Christmas Day']
+      ] },
+    { name: 'Shanghai Stock Exchange', code: 'Shanghai Composite · SSE', city: 'Shanghai', tz: 'Asia/Shanghai', sessions: [[9*60+30, 11*60+30], [13*60, 15*60]],
+      holidays: [
+        ['2026-01-01','New Year\u2019s Day'], ['2026-01-02','New Year\u2019s Day holiday'],
+        ['2026-02-16','Spring Festival'], ['2026-02-17','Spring Festival'], ['2026-02-18','Spring Festival'],
+        ['2026-02-19','Spring Festival'], ['2026-02-20','Spring Festival'], ['2026-02-23','Spring Festival'],
+        ['2026-04-06','Qingming Festival'], ['2026-05-01','Labour Day'], ['2026-05-04','Labour Day holiday'],
+        ['2026-05-05','Labour Day holiday'], ['2026-06-19','Dragon Boat Festival'], ['2026-09-25','Mid-Autumn Festival'],
+        ['2026-10-01','National Day'], ['2026-10-02','National Day holiday'], ['2026-10-05','National Day holiday'],
+        ['2026-10-06','National Day holiday'], ['2026-10-07','National Day holiday']
+      ] },
+    { name: 'Tokyo Stock Exchange', code: 'TOPIX · TSE', city: 'Tokyo', tz: 'Asia/Tokyo', sessions: [[9*60, 11*60+30], [12*60+30, 15*60]],
+      holidays: [
+        ['2026-01-01','New Year\u2019s Day'], ['2026-01-02','New Year Holiday'], ['2026-01-12','Coming of Age Day'],
+        ['2026-02-11','National Foundation Day'], ['2026-02-23','Emperor\u2019s Birthday'], ['2026-03-20','Vernal Equinox Day'],
+        ['2026-04-29','Showa Day'], ['2026-05-04','Greenery Day'], ['2026-05-05','Children\u2019s Day'],
+        ['2026-05-06','Constitution Day (observed)'], ['2026-08-11','Mountain Day'], ['2026-09-21','Respect for the Aged Day'],
+        ['2026-09-22','Citizens\u2019 Holiday (Bridge Day)'], ['2026-09-23','Autumnal Equinox Day'], ['2026-10-12','Sports Day'],
+        ['2026-11-03','Culture Day'], ['2026-11-23','Labor Thanksgiving Day'], ['2026-12-31','Market Holiday']
+      ] },
+    { name: 'Australian Securities Exchange', code: 'ASX 200', city: 'Sydney', tz: 'Australia/Sydney', sessions: [[10*60, 16*60]],
+      holidays: [
+        ['2026-01-01','New Year\u2019s Day'], ['2026-01-26','Australia Day'], ['2026-04-03','Good Friday'],
+        ['2026-04-06','Easter Monday'], ['2026-06-08','King\u2019s Birthday'], ['2026-12-25','Christmas Day'],
+        ['2026-12-28','Boxing Day (observed)']
+      ] },
+    { name: 'Deutsche Börse (Xetra)', code: 'Euro Stoxx 50', city: 'Frankfurt', tz: 'Europe/Berlin', sessions: [[9*60, 17*60+30]],
+      holidays: [
+        ['2026-01-01','New Year\u2019s Day'], ['2026-04-03','Good Friday'], ['2026-04-06','Easter Monday'],
+        ['2026-05-01','Labour Day'], ['2026-12-24','Christmas Eve'], ['2026-12-25','Christmas Day'],
+        ['2026-12-31','New Year\u2019s Eve']
+      ] },
+    { name: 'London Stock Exchange', code: 'FTSE 100', city: 'London', tz: 'Europe/London', sessions: [[8*60, 16*60+30]],
+      holidays: [
+        ['2026-01-01','New Year\u2019s Day'], ['2026-04-03','Good Friday'], ['2026-04-06','Easter Monday'],
+        ['2026-05-04','Early May Bank Holiday'], ['2026-05-25','Spring Bank Holiday'], ['2026-08-31','Summer Bank Holiday'],
+        ['2026-12-25','Christmas Day'], ['2026-12-28','Boxing Day (observed)']
+      ] }
+  ];
+
+  const WEEKDAY_INDEX = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+
+  const rowsEl = document.getElementById('rows');
+  const rowEls = EXCHANGES.map((ex) => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `
+      <div class="dot" data-el="dot"></div>
+      <div class="exchange">
+        <div class="name">${ex.name}</div>
+        <div class="city">${ex.code} · ${ex.city}</div>
+      </div>
+      <div class="session-window" data-el="session">--:--&#8211;--:--<span class="zone" data-el="sgtnote">SGT</span></div>
+      <div class="status-cell">
+        <div class="status-label" data-el="status">—</div>
+        <div class="status-note" data-el="statusnote"></div>
+      </div>
+      <div class="countdown" data-el="closecountdown">--:--:--<span class="cd-label" data-el="closelabel"></span></div>
+      <div class="countdown" data-el="opencountdown">--:--:--<span class="cd-label" data-el="openlabel"></span></div>
+    `;
+    rowsEl.appendChild(row);
+    return {
+      dot: row.querySelector('[data-el="dot"]'),
+      session: row.querySelector('[data-el="session"]'),
+      status: row.querySelector('[data-el="status"]'),
+      statusnote: row.querySelector('[data-el="statusnote"]'),
+      opencountdown: row.querySelector('[data-el="opencountdown"]'),
+      openlabel: row.querySelector('[data-el="openlabel"]'),
+      closecountdown: row.querySelector('[data-el="closecountdown"]'),
+      closelabel: row.querySelector('[data-el="closelabel"]')
+    };
+  });
+
+  function localParts(tz, date) {
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz, weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    });
+    const parts = fmt.formatToParts(date);
+    const map = {};
+    parts.forEach(p => { map[p.type] = p.value; });
+    let hour = parseInt(map.hour, 10);
+    if (hour === 24) hour = 0;
+    const minute = parseInt(map.minute, 10);
+    const second = parseInt(map.second, 10);
+    const weekdayIdx = WEEKDAY_INDEX[map.weekday];
+    return { weekdayIdx, minutes: hour * 60 + minute, seconds: hour * 3600 + minute * 60 + second, hour, minute };
+  }
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function getOffsetMinutes(tz, date) {
+    const dtf = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'longOffset' });
+    const part = dtf.formatToParts(date).find(p => p.type === 'timeZoneName');
+    const m = part && part.value.match(/GMT([+-])(\d{1,2}):?(\d{2})?/);
+    if (!m) return 0;
+    const sign = m[1] === '-' ? -1 : 1;
+    return sign * (parseInt(m[2], 10) * 60 + parseInt(m[3] || '0', 10));
+  }
+
+  function localYMD(tz, date) {
+    const dtf = new Intl.DateTimeFormat('en-US', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' });
+    const map = {};
+    dtf.formatToParts(date).forEach(p => { map[p.type] = p.value; });
+    return { year: parseInt(map.year, 10), month: parseInt(map.month, 10), day: parseInt(map.day, 10) };
+  }
+
+  function utcMillisForLocalClock(tz, now, dayOffset, minutesOfDay) {
+    const ymd = localYMD(tz, now);
+    const anchor = Date.UTC(ymd.year, ymd.month - 1, ymd.day) + dayOffset * 86400000;
+    const anchorDate = new Date(anchor);
+    const offsetMin = getOffsetMinutes(tz, anchorDate);
+    const hh = Math.floor(minutesOfDay / 60);
+    const mm = Math.round(minutesOfDay % 60);
+    return Date.UTC(anchorDate.getUTCFullYear(), anchorDate.getUTCMonth(), anchorDate.getUTCDate(), hh, mm, 0) - offsetMin * 60000;
+  }
+
+  function sgtClock(utcMillis) {
+    const p = localParts('Asia/Singapore', new Date(utcMillis));
+    return `${pad(p.hour)}:${pad(p.minute)}`;
+  }
+
+  function dateStringForOffset(tz, now, dayOffset) {
+    const ymd = localYMD(tz, now);
+    const anchor = Date.UTC(ymd.year, ymd.month - 1, ymd.day) + dayOffset * 86400000;
+    const d = new Date(anchor);
+    return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+  }
+
+  function holidayOn(ex, dateStr) {
+    const hit = ex.holidays.find(h => h[0] === dateStr);
+    return hit ? hit[1] : null;
+  }
+
+  function sessionWindowSGT(ex, now, dayOffset) {
+    const opens = ex.sessions.map(s => s[0]);
+    const closes = ex.sessions.map(s => s[1]);
+    const firstOpen = Math.min(...opens);
+    const lastClose = Math.max(...closes);
+    const startMillis = utcMillisForLocalClock(ex.tz, now, dayOffset, firstOpen);
+    const endMillis = utcMillisForLocalClock(ex.tz, now, dayOffset, lastClose);
+    return `${sgtClock(startMillis)}\u2013${sgtClock(endMillis)}`;
+  }
+
+  function finalCloseMillis(ex, now) {
+    const lastClose = Math.max(...ex.sessions.map(s => s[1]));
+    return utcMillisForLocalClock(ex.tz, now, 0, lastClose);
+  }
+
+  function nextDailyEvent(ex, now, targetMinutes) {
+    const p = localParts(ex.tz, now);
+    for (let dayOffset = 0; dayOffset <= 10; dayOffset++) {
+      const wd = (p.weekdayIdx + dayOffset) % 7;
+      if (wd < 1 || wd > 5) continue;
+      const dateStr = dateStringForOffset(ex.tz, now, dayOffset);
+      if (holidayOn(ex, dateStr)) continue;
+      const utcMillis = utcMillisForLocalClock(ex.tz, now, dayOffset, targetMinutes);
+      if (utcMillis > now.getTime()) return { utcMillis, dayOffset };
+    }
+    return null;
+  }
+
+  function nextAnyOpen(ex, now) {
+    const p = localParts(ex.tz, now);
+    const opens = ex.sessions.map(s => s[0]).slice().sort((a, b) => a - b);
+    for (let dayOffset = 0; dayOffset <= 10; dayOffset++) {
+      const wd = (p.weekdayIdx + dayOffset) % 7;
+      if (wd < 1 || wd > 5) continue;
+      const dateStr = dateStringForOffset(ex.tz, now, dayOffset);
+      if (holidayOn(ex, dateStr)) continue;
+      for (const om of opens) {
+        const utcMillis = utcMillisForLocalClock(ex.tz, now, dayOffset, om);
+        if (utcMillis > now.getTime()) return { utcMillis, dayOffset };
+      }
+    }
+    return null;
+  }
+
+  function isOpenNow(ex, now) {
+    const p = localParts(ex.tz, now);
+    const isWeekday = p.weekdayIdx >= 1 && p.weekdayIdx <= 5;
+    if (!isWeekday) return { open: false, inLunch: false, holiday: null };
+    const dateStr = dateStringForOffset(ex.tz, now, 0);
+    const holiday = holidayOn(ex, dateStr);
+    if (holiday) return { open: false, inLunch: false, holiday };
+    for (const [open, close] of ex.sessions) {
+      if (p.minutes >= open && p.minutes < close) return { open: true, inLunch: false, holiday: null };
+    }
+    if (ex.sessions.length > 1) {
+      const firstClose = ex.sessions[0][1];
+      const secondOpen = ex.sessions[1][0];
+      if (p.minutes >= firstClose && p.minutes < secondOpen) return { open: false, inLunch: true, holiday: null };
+    }
+    return { open: false, inLunch: false, holiday: null };
+  }
+
+  function fmtHMS(totalSeconds) {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = Math.floor(totalSeconds % 60);
+    if (h >= 24) {
+      const d = Math.floor(h / 24);
+      return `${d}d ${pad(h % 24)}h`;
+    }
+    return `${pad(h)}:${pad(m)}:${pad(s)}`;
+  }
+
+  function tick() {
+    const now = new Date();
+
+    const sgt = localParts('Asia/Singapore', now);
+    document.getElementById('nowSGT').textContent =
+      `${pad(sgt.hour)}:${pad(sgt.minute)}:${pad(Math.floor(sgt.seconds % 60))}`;
+
+    EXCHANGES.forEach((ex, i) => {
+      const el = rowEls[i];
+      const p = localParts(ex.tz, now);
+
+      const { open, inLunch, holiday } = isOpenNow(ex, now);
+      const lastCloseMinutes = Math.max(...ex.sessions.map(s => s[1]));
+
+      const openEvt = open ? null : nextAnyOpen(ex, now);
+      const closeEvt = open ? nextDailyEvent(ex, now, lastCloseMinutes) : null;
+
+      const sessionDayOffset = open ? (closeEvt ? closeEvt.dayOffset : 0) : (openEvt ? openEvt.dayOffset : 0);
+      el.session.childNodes[0].nodeValue = sessionWindowSGT(ex, now, sessionDayOffset);
+
+      el.dot.className = 'dot' + (open ? ' open' : inLunch ? ' lunch' : '');
+
+      if (open) {
+        el.status.textContent = 'Open';
+        el.status.className = 'status-label open';
+        el.statusnote.textContent = '';
+      } else if (inLunch) {
+        el.status.textContent = 'Lunch break';
+        el.status.className = 'status-label lunch';
+        el.statusnote.textContent = '';
+      } else if (holiday) {
+        el.status.textContent = 'Closed';
+        el.status.className = 'status-label';
+        el.statusnote.textContent = holiday;
+      } else {
+        const isWeekend = p.weekdayIdx === 0 || p.weekdayIdx === 6;
+        el.status.textContent = isWeekend ? 'Weekend' : 'Closed';
+        el.status.className = 'status-label';
+        el.statusnote.textContent = '';
+      }
+
+      if (openEvt) {
+        el.opencountdown.childNodes[0].nodeValue = fmtHMS((openEvt.utcMillis - now.getTime()) / 1000);
+        el.openlabel.textContent = `opens ${sgtClock(openEvt.utcMillis)} SGT`;
+      } else {
+        el.opencountdown.childNodes[0].nodeValue = '\u2014';
+        el.openlabel.textContent = '';
+      }
+
+      if (closeEvt) {
+        el.closecountdown.childNodes[0].nodeValue = fmtHMS((closeEvt.utcMillis - now.getTime()) / 1000);
+        el.closelabel.textContent = `closes ${sgtClock(closeEvt.utcMillis)} SGT`;
+      } else {
+        el.closecountdown.childNodes[0].nodeValue = '\u2014';
+        el.closelabel.textContent = '';
+      }
+    });
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>
